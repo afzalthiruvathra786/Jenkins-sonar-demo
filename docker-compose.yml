@@ -5,7 +5,6 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
-    user: root
     ports:
       - "8080:8080"
       - "50000:50000"
@@ -16,8 +15,9 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
-      - /usr/local/bin/kubectl:/usr/local/bin/kubectl
-      - /home/afzal/.kube:/root/.kube
+      - /usr/local/bin/kubectl:/usr/local/bin/kubectl  # Add this (path may vary)
+      - /home/afzal/.kube:/var/jenkins_home/.kube     # Mount to jenkins home
+      - /home/afzal/.minikube:/home/afzal/.minikube
 
   sonarqube:
     image: sonarqube:community

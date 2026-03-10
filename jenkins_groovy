@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    environment {
+        SCANNER_HOME = tool 'sonarqube_tool'
+        IMAGE_NAME   = 'afzalkunnath/jenkins-sonar-nginix-demo'
+        EC2_IP       = '3.231.230.233'
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/afzalthiruvathra786/Jenkins-sonar-demo.git'
+            }
+        }
+
+        stage('Sonarqube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh "${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=jenkins_sonar_nginix_demo -Dsonar.sources=."
+                }
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME}:latest ."
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'Docker_hub', 
+                                 passwordVariable: 'DOCKER_PASS', 
+                                 usernameVariable: 'DOCKER_USER')]) {
+                    sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
+                    sh "docker push ${IMAGE_NAME}:latest"
+                    sh "docker logout"
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                withCredentials([
+                    sshUserPrivateKey(
+                        credentialsId: 'aws-ec2',
+                        keyFileVariable: 'SSH_KEY_PATH',
+                        usernameVariable: 'SSH_USER'
+                    )
+                ]) {
+                     sh """
+                        chmod 600 ${SSH_KEY_PATH}
+                        ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${SSH_USER}@${EC2_IP} <<EOF
+                            docker pull ${IMAGE_NAME}:latest
+                            docker stop jenkins-sonar-nginix-demo || true 
+                            docker rm jenkins-sonar-nginix-demo || true 
+                            docker run --name jenkins-sonar-nginix-demo -p 80:80 -d ${IMAGE_NAME}:latest
+EOF
+                    """
+                }
+            }
+        }
+    }
+}
