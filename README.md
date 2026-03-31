@@ -2,9 +2,7 @@
 
 ## 📌 Project Overview
 
-This project demonstrates a complete CI/CD pipeline using Jenkins and SonarQube running in Docker containers.
-The pipeline automatically builds, analyzes, and deploys an Nginx website whenever code is pushed to GitHub.
-
+This project showcases an end-to-end CI/CD pipeline leveraging Jenkins and SonarQube deployed in Docker containers. The pipeline automates code integration, quality analysis, containerization, and deployment of an Nginx application to AWS EC2. It uses GitHub webhooks for event-driven execution, ensuring fast, consistent, and automated application delivery.
 ---
 
 ## 🏗️ Architecture
@@ -21,6 +19,7 @@ GitHub Repository → Jenkins Pipeline → SonarQube Code Analysis → Docker Im
 * GitHub Webhooks
 * Nginx Web Server
 * Linux / WSL environment
+* AWS EC2
 
 ---
 
@@ -55,46 +54,69 @@ GitHub Repository → Jenkins Pipeline → SonarQube Code Analysis → Docker Im
 
 ### 4️⃣ Pipeline Workflow
 
-Pipeline stages:
+The pipeline automates the complete application lifecycle through the following stages:
 
-* Source code checkout from GitHub
-* Static code analysis using SonarQube
-* Docker image build
-* Automatic deployment of Nginx website container
-
+- Checkout latest source code from GitHub  
+- Perform static code analysis using SonarQube  
+- Build and tag Docker image  
+- Push image to Docker Hub registry  
+- Deploy application to AWS EC2 via SSH:
+  - Pull latest image from Docker Hub  
+  - Replace existing container with updated version  
+  - Run Nginx container and expose application on port 80  
 ---
 
 ### 5️⃣ Website Deployment
 
-* Dockerfile created using Nginx base image.
-* Website deployed automatically after successful pipeline execution.
+- Created a Dockerfile using the official Nginx base image  
+- Configured the container to serve the static website content  
+- Automated deployment of the Nginx container on AWS EC2 after successful pipeline execution  
+- Application is exposed on port 80 and accessible via EC2 public IP  
 
 ---
 
 ## 📊 Outcome
 
-* Automated CI/CD pipeline implemented successfully.
-* Code quality analysis integrated.
-* Website deployment fully automated.
+- Successfully implemented an end-to-end automated CI/CD pipeline  
+- Integrated static code analysis using SonarQube  
+- Achieved seamless Docker-based application deployment to AWS EC2  
+- Reduced manual intervention through pipeline automation  
 
 ---
 
 ## 💡 Key Learnings
 
-* CI/CD pipeline automation using Jenkins
-* Containerized DevOps environment setup
-* Docker networking between services
-* GitHub webhook integration
-* Code quality analysis with SonarQube
-
+- Implemented end-to-end CI/CD pipeline automation using Jenkins  
+- Set up a containerized DevOps environment using Docker  
+- Configured Docker networking for seamless communication between services  
+- Integrated GitHub webhooks for automated pipeline triggering  
+- Performed static code analysis using SonarQube  
+- Built and pushed Docker images to Docker Hub  
+- Automated application deployment to AWS EC2 using SSH  
 ---
+## 🧱 Architecture Diagram
 
+```mermaid
+flowchart LR
+    A[Developer] -->|Push Code| B[GitHub Repository]
+    B -->|Webhook Trigger| C[Jenkins Pipeline]
+
+    C --> D[SonarQube Analysis]
+    D --> E[Docker Build]
+
+    E --> F[Docker Hub]
+    F -->|Pull Image| G[AWS EC2 Instance]
+
+    G --> H[Docker Container - Nginx]
+    H --> I[End User - Browser]
+---
 ## 🚀 Future Improvements
 
-* Add Docker Hub image push
-* AWS EC2 deployment
-* HTTPS with reverse proxy
-* Monitoring and logging setup
+- Implement Kubernetes-based deployment (Minikube / AWS EKS)  
+- Automate infrastructure provisioning using Terraform  
+- Configure HTTPS using Nginx reverse proxy and SSL certificates  
+- Integrate monitoring and logging using Prometheus and Grafana  
+- Implement CI/CD pipeline for Kubernetes deployments  
 
 ---
 
