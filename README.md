@@ -94,22 +94,7 @@ The pipeline automates the complete application lifecycle through the following 
 - Built and pushed Docker images to Docker Hub  
 - Automated application deployment to AWS EC2 using SSH  
 ---
-## 🧱 Architecture Diagram
 
-```mermaid
-flowchart LR
-    A[Developer] -->|Push Code| B[GitHub Repository]
-    B -->|Webhook Trigger| C[Jenkins Pipeline]
-
-    C --> D[SonarQube Analysis]
-    D --> E[Docker Build]
-
-    E --> F[Docker Hub]
-    F -->|Pull Image| G[AWS EC2 Instance]
-
-    G --> H[Docker Container - Nginx]
-    H --> I[End User - Browser]
----
 ## 🚀 Future Improvements
 
 - Implement Kubernetes-based deployment (Minikube / AWS EKS)  
