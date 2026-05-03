@@ -11,6 +11,13 @@ GitHub Repository → Jenkins Pipeline → SonarQube Code Analysis → Docker Im
 
 ---
 
+## 📊 CI/CD Pipeline Diagram
+
+<p align="center">
+  <img src="ci-cd-diagram.png" width="800"/>
+</p>
+---
+
 ## 🛠️ Technologies Used
 
 * Jenkins (Docker container)
